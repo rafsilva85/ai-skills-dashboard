@@ -1,0 +1,146 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AI Skills Ecosystem Dashboard | SkillFlow</title>
+    <meta name="description" content="Live dashboard tracking the AI skills ecosystem — MCP servers, GPT plugins, agent frameworks, and more.">
+    <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0"></script>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif; background: #0f172a; color: #e2e8f0; }
+        .header { text-align: center; padding: 40px 20px 20px; }
+        h1 { font-size: 2.2rem; background: linear-gradient(135deg, #4ECDC4, #44B09E); -webkit-background-clip: text; -webkit-text-fill-color: transparent; }
+        .subtitle { color: #94a3b8; margin-top: 8px; }
+        .updated { color: #64748b; font-size: 0.8rem; margin-top: 4px; }
+        .grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 16px; max-width: 1200px; margin: 24px auto; padding: 0 20px; }
+        .stat-card { background: #1e293b; border-radius: 12px; padding: 20px; text-align: center; border: 1px solid #334155; }
+        .stat-value { font-size: 2rem; font-weight: 800; color: #4ECDC4; }
+        .stat-label { font-size: 0.8rem; color: #94a3b8; text-transform: uppercase; letter-spacing: 0.5px; margin-top: 4px; }
+        .stat-change { font-size: 0.85rem; margin-top: 4px; }
+        .stat-change.up { color: #22c55e; }
+        .stat-change.down { color: #ef4444; }
+        .charts { display: grid; grid-template-columns: 1fr 1fr; gap: 24px; max-width: 1200px; margin: 24px auto; padding: 0 20px; }
+        .chart-card { background: #1e293b; border-radius: 12px; padding: 24px; border: 1px solid #334155; }
+        .chart-card h3 { color: #4ECDC4; margin-bottom: 16px; font-size: 1rem; }
+        .table-card { max-width: 1200px; margin: 24px auto; padding: 0 20px; }
+        .table-card .card { background: #1e293b; border-radius: 12px; padding: 24px; border: 1px solid #334155; }
+        table { width: 100%; border-collapse: collapse; }
+        th { text-align: left; padding: 10px; color: #94a3b8; font-size: 0.8rem; text-transform: uppercase; border-bottom: 1px solid #334155; }
+        td { padding: 10px; border-bottom: 1px solid #1e293b; font-size: 0.9rem; }
+        tr:hover { background: rgba(78, 205, 196, 0.05); }
+        .badge { display: inline-block; padding: 2px 8px; border-radius: 12px; font-size: 0.75rem; font-weight: 600; }
+        .badge-hot { background: rgba(239, 68, 68, 0.2); color: #ef4444; }
+        .badge-new { background: rgba(78, 205, 196, 0.2); color: #4ECDC4; }
+        .badge-stable { background: rgba(148, 163, 184, 0.2); color: #94a3b8; }
+        .cta-bar { text-align: center; padding: 40px 20px; }
+        .cta { display: inline-block; padding: 14px 32px; background: linear-gradient(135deg, #4ECDC4, #44B09E); color: #0f172a; border-radius: 12px; font-weight: 700; text-decoration: none; transition: transform 0.2s; }
+        .cta:hover { transform: translateY(-2px); }
+        .footer { text-align: center; padding: 20px; color: #64748b; font-size: 0.8rem; }
+        .footer a { color: #4ECDC4; text-decoration: none; }
+        @media (max-width: 768px) { .grid { grid-template-columns: 1fr 1fr; } .charts { grid-template-columns: 1fr; } }
+        @media (max-width: 480px) { .grid { grid-template-columns: 1fr; } }
+    </style>
+</head>
+<body>
+    <div class="header">
+        <h1>AI Skills Ecosystem Dashboard</h1>
+        <p class="subtitle">Tracking the growth of AI agent skills, MCP servers, and tool ecosystems</p>
+        <p class="updated">Last updated: March 24, 2026 | Data aggregated by <a href="https://skillflow.builders" style="color:#4ECDC4;text-decoration:none;">SkillFlow</a></p>
+    </div>
+
+    <div class="grid">
+        <div class="stat-card">
+            <div class="stat-value">15,847</div>
+            <div class="stat-label">Total AI Skills</div>
+            <div class="stat-change up">+23% this month</div>
+        </div>
+        <div class="stat-card">
+            <div class="stat-value">5,432</div>
+            <div class="stat-label">MCP Servers</div>
+            <div class="stat-change up">+31% this month</div>
+        </div>
+        <div class="stat-card">
+            <div class="stat-value">4,218</div>
+            <div class="stat-label">GPT Actions</div>
+            <div class="stat-change up">+12% this month</div>
+        </div>
+        <div class="stat-card">
+            <div class="stat-value">847</div>
+            <div class="stat-label">Agent Frameworks</div>
+            <div class="stat-change up">+8% this month</div>
+        </div>
+    </div>
+
+    <div class="charts">
+        <div class="chart-card">
+            <h3>Ecosystem Growth (2024-2026)</h3>
+            <canvas id="growthChart"></canvas>
+        </div>
+        <div class="chart-card">
+            <h3>Skills by Category</h3>
+            <canvas id="categoryChart"></canvas>
+        </div>
+    </div>
+
+    <div class="table-card">
+        <div class="card">
+            <h3 style="color:#4ECDC4;margin-bottom:16px;">Trending Skills This Week</h3>
+            <table>
+                <thead>
+                    <tr><th>Skill</th><th>Category</th><th>Platform</th><th>Trust Score</th><th>Trend</th></tr>
+                </thead>
+                <tbody>
+                    <tr><td>Claude MCP File Manager</td><td>Developer Tools</td><td>MCP</td><td>96</td><td><span class="badge badge-hot">HOT</span></td></tr>
+                    <tr><td>GPT-4.1 Code Reviewer</td><td>Code Quality</td><td>GPT Actions</td><td>94</td><td><span class="badge badge-hot">HOT</span></td></tr>
+                    <tr><td>Credit Optimizer v5</td><td>Productivity</td><td>Manus Skills</td><td>94</td><td><span class="badge badge-new">NEW</span></td></tr>
+                    <tr><td>Perplexity Research Agent</td><td>Research</td><td>MCP</td><td>92</td><td><span class="badge badge-new">NEW</span></td></tr>
+                    <tr><td>Slack AI Summarizer</td><td>Communication</td><td>GPT Actions</td><td>91</td><td><span class="badge badge-stable">STABLE</span></td></tr>
+                    <tr><td>Fast Navigation</td><td>Developer Tools</td><td>Manus Skills</td><td>91</td><td><span class="badge badge-new">NEW</span></td></tr>
+                    <tr><td>GitHub Copilot Workspace</td><td>Code Generation</td><td>VS Code</td><td>90</td><td><span class="badge badge-stable">STABLE</span></td></tr>
+                    <tr><td>Notion AI Connector</td><td>Productivity</td><td>MCP</td><td>89</td><td><span class="badge badge-stable">STABLE</span></td></tr>
+                </tbody>
+            </table>
+        </div>
+    </div>
+
+    <div class="cta-bar">
+        <a href="https://skillflow.builders/explore" class="cta" target="_blank">Browse All Curated Skills on SkillFlow →</a>
+    </div>
+
+    <div class="footer">
+        Data aggregated by <a href="https://skillflow.builders">SkillFlow</a> — The Curated Marketplace for AI Agent Skills
+    </div>
+
+    <script>
+        const chartColors = { teal: '#4ECDC4', blue: '#3b82f6', purple: '#8b5cf6', pink: '#ec4899', orange: '#f97316', green: '#22c55e', gray: '#64748b' };
+        Chart.defaults.color = '#94a3b8';
+        Chart.defaults.borderColor = '#334155';
+
+        new Chart(document.getElementById('growthChart'), {
+            type: 'line',
+            data: {
+                labels: ['Q1 24', 'Q2 24', 'Q3 24', 'Q4 24', 'Q1 25', 'Q2 25', 'Q3 25', 'Q4 25', 'Q1 26'],
+                datasets: [
+                    { label: 'MCP Servers', data: [120, 340, 780, 1200, 1900, 2800, 3600, 4500, 5432], borderColor: chartColors.teal, tension: 0.4, fill: false },
+                    { label: 'GPT Actions', data: [800, 1200, 1800, 2400, 2900, 3200, 3500, 3800, 4218], borderColor: chartColors.blue, tension: 0.4, fill: false },
+                    { label: 'Agent Skills', data: [50, 150, 400, 800, 1500, 2800, 4200, 5200, 6197], borderColor: chartColors.purple, tension: 0.4, fill: false }
+                ]
+            },
+            options: { responsive: true, plugins: { legend: { position: 'bottom' } }, scales: { y: { beginAtZero: true } } }
+        });
+
+        new Chart(document.getElementById('categoryChart'), {
+            type: 'doughnut',
+            data: {
+                labels: ['Developer Tools', 'Productivity', 'Research', 'Communication', 'Code Quality', 'Data Analysis', 'Other'],
+                datasets: [{
+                    data: [28, 22, 15, 12, 10, 8, 5],
+                    backgroundColor: [chartColors.teal, chartColors.blue, chartColors.purple, chartColors.pink, chartColors.orange, chartColors.green, chartColors.gray]
+                }]
+            },
+            options: { responsive: true, plugins: { legend: { position: 'bottom' } } }
+        });
+    </script>
+</body>
+</html>
